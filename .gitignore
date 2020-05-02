@@ -22,3 +22,6 @@ _testmain.go
 *.exe
 *.test
 *.prof
+
+#Something Private
+conf.json
