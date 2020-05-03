@@ -36,15 +36,3 @@ func getAuInfo(au string) (Auinfo Auinfo) {
 	Auinfo.AuDesp = gjson.Get(body, "data.h5Songs.author").String()
 	return
 }
-
-//Auinfo contains some basic info of a Au number.
-type Auinfo struct {
-	AuNumber   string
-	AuStatus   bool
-	AuMsg      string
-	AuJumpURL  string
-	AuCoverURL string
-	AuURL      string
-	AuTitle    string
-	AuDesp     string
-}
