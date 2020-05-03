@@ -11,6 +11,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
+//Send Group message by using CoolQ HttpAPI
 func cqSendGroupMsg(id, msg string) {
 	conf := readConfig()
 	cqAddr := gjson.Get(conf, "CoolQ.0.Api.HttpAPIAddr").String()
@@ -18,6 +19,7 @@ func cqSendGroupMsg(id, msg string) {
 	getWbeContent(cqAddr + "/send_group_msg?access_token=" + cqToken + "&group_id=" + id + "&message=" + url.QueryEscape(msg))
 }
 
+//Send private message by using CoolQ HttpAPI
 func cqSendPrivateMsg(id, msg string) {
 	conf := readConfig()
 	cqAddr := gjson.Get(conf, "CoolQ.0.Api.HttpAPIAddr").String()
@@ -25,6 +27,7 @@ func cqSendPrivateMsg(id, msg string) {
 	getWbeContent(cqAddr + "/send_private_msg?access_token=" + cqToken + "&user_id=" + id + "&message=" + url.QueryEscape(msg))
 }
 
+//Read config file.
 func readConfig() string {
 	file, err := ioutil.ReadFile("conf.json")
 	if err != nil {
@@ -34,7 +37,8 @@ func readConfig() string {
 	return result
 }
 
-func getWbeContent(url string) {
+//Get web Content by using GET request.
+func getWbeContent(url string) (body []byte) {
 	client := &http.Client{}
 	request, err := http.NewRequest("GET", url, nil)
 	request.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4117.2 Safari/537.36")
@@ -50,7 +54,9 @@ func getWbeContent(url string) {
 		os.Exit(21)
 	}
 	defer response.Body.Close()
-	//fmt.Println(response)
-	//fmt.Printf("%T",response)
-
+	content, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return content
 }

@@ -23,5 +23,9 @@ _testmain.go
 *.test
 *.prof
 
-#Something Private
+#Something private
 conf.json
+
+#Temp File
+BiliAu2Card
+_tmp.json
