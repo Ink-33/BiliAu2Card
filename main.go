@@ -27,6 +27,9 @@ func readConfig() string {
 
 //Get audio number by regexp.
 func getAu(msg string) (au string) {
+	if strings.Contains(msg,"CQ:rich"){
+		return ""
+	}
 	reg, err := regexp.Compile("(?i)au[0-9]+")
 	if err != nil {
 		log.Fatalln(err)
