@@ -27,16 +27,6 @@ func cqSendPrivateMsg(id, msg string) {
 	getWbeContent(cqAddr + "/send_private_msg?access_token=" + cqToken + "&user_id=" + id + "&message=" + url.QueryEscape(msg))
 }
 
-//Read config file.
-func readConfig() string {
-	file, err := ioutil.ReadFile("conf.json")
-	if err != nil {
-		log.Fatal(err)
-	}
-	result := string(file)
-	return result
-}
-
 //Get web Content by using GET request.
 func getWbeContent(url string) (body []byte) {
 	client := &http.Client{}
