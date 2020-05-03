@@ -1,0 +1,16 @@
+{
+    "CoolQ": [
+        {
+            "Api": {
+                "HttpAPIAddr": "",
+                "HttpAPIToken": ""
+            }
+        }
+    ],
+    "Bili2Card": [
+        {
+            "ListeningPath": "/api/cqmsg",
+            "ListeningPort": 65122
+        }
+    ]
+}
