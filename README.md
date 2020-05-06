@@ -7,7 +7,7 @@
 将`conf.example.json`重命名为`cong.json`  
 
 ```shell
-$mv ./conf.example.json cong.json/
+$mv ./conf.example.json ./cong.json
 ```
 以下为配置文件
 ```json
