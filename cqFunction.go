@@ -1,12 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
-	"os"
 
 	"github.com/tidwall/gjson"
 )
@@ -33,15 +31,11 @@ func getWbeContent(url string) (body []byte) {
 	request, err := http.NewRequest("GET", url, nil)
 	request.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4117.2 Safari/537.36")
 	if err != nil {
-		log.Fatal(err)
-		fmt.Println(err)
-		os.Exit(20)
+		log.Fatalln(err)
 	}
 	response, err := client.Do(request)
 	if err != nil {
-		log.Fatal(err)
-		fmt.Println(err)
-		os.Exit(21)
+		log.Fatalln(err)
 	}
 	defer response.Body.Close()
 	content, err := ioutil.ReadAll(response.Body)

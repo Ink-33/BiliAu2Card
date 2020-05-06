@@ -27,7 +27,7 @@ func readConfig() string {
 
 //Get audio number by regexp.
 func getAu(msg string) (au string) {
-	if strings.Contains(msg,"CQ:rich"){
+	if strings.Contains(msg, "CQ:rich") {
 		return ""
 	}
 	reg, err := regexp.Compile("(?i)au[0-9]+")
@@ -42,11 +42,20 @@ func getAu(msg string) (au string) {
 func au2card(MsgInfo MsgInfo) {
 	au := getAu(MsgInfo.Message)
 	if au != "" {
-		log.Println("BiliAu2Card: Created request for", au,"from:",MsgInfo.SenderID)
+		log.Println("BiliAu2Card: Created request for", au, "from:", MsgInfo.SenderID)
 		Auinfo := getAuInfo(au)
 
 		if !Auinfo.AuStatus {
-			log.Println("BiliAu2Card: AU", Auinfo.AuNumber, Auinfo.AuMsg)
+			msgMake := "BiliAu2Card: AU" + Auinfo.AuNumber + Auinfo.AuMsg
+			log.Println(msgMake)
+			switch MsgInfo.MsgType {
+			case "private":
+				cqSendPrivateMsg(MsgInfo.SenderID, msgMake)
+				break
+			case "group":
+				cqSendGroupMsg(MsgInfo.GroupID, msgMake)
+				break
+			}
 		} else {
 			cqCodeMake := "[CQ:music,type=custom,url=" + Auinfo.AuJumpURL + ",audio=" + Auinfo.AuURL + ",title=" + Auinfo.AuTitle + ",content=" + Auinfo.AuDesp + ",image=" + Auinfo.AuCoverURL + "@180w_180h]"
 			switch MsgInfo.MsgType {
@@ -60,7 +69,7 @@ func au2card(MsgInfo MsgInfo) {
 		}
 
 	} else {
-		log.Println("BiliAu2Card: Ingore message:", MsgInfo.Message,"from:",MsgInfo.SenderID)
+		log.Println("BiliAu2Card: Ingore message:", MsgInfo.Message, "from:", MsgInfo.SenderID)
 	}
 }
 
@@ -87,6 +96,7 @@ func handleHTTP(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Fatalln(err)
 		}
+		//TODO: Add HMAC-SHA1 signature verification.
 		/*
 			mac1 := hmac.New(sha1.New, []byte(cqsecret))
 			fmt.Println(string(body[:]))
@@ -101,8 +111,8 @@ func handleHTTP(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	config := readConfig()
-	path := gjson.Get(config, "Bili2Card.0.ListeningPath").String()
-	port := gjson.Get(config, "Bili2Card.0.ListeningPort").String()
+	path := gjson.Get(config, "BiliAu2Card.0.ListeningPath").String()
+	port := gjson.Get(config, "BiliAu2Card.0.ListeningPort").String()
 	log.Println("BiliAu2Card: Start listening", path, port)
 
 	http.HandleFunc(path, handleHTTP)

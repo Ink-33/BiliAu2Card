@@ -7,7 +7,7 @@
             }
         }
     ],
-    "Bili2Card": [
+    "BiliAu2Card": [
         {
             "ListeningPath": "/api/cqmsg",
             "ListeningPort": 65122
