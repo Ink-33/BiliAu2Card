@@ -38,3 +38,6 @@ $mv ./conf.example.json ./cong.json
 `ListeningPort`: BiliAu2Card监听端口
 
 修改完成后运行即可。
+
+## 将来将要加入的功能
+1: Add HMAC-SHA1 signature verification.
