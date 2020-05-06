@@ -6,6 +6,7 @@
 # Folders
 _obj
 _test
+dist
 
 # Architecture specific extensions/prefixes
 *.[568vq]
@@ -22,10 +23,6 @@ _testmain.go
 *.exe
 *.test
 *.prof
-
+*.yml
 #Something private
 conf.json
-
-#Temp File
-BiliAu2Card
-_tmp.json
