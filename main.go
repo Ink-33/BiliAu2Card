@@ -113,6 +113,7 @@ func main() {
 	config := readConfig()
 	path := gjson.Get(config, "BiliAu2Card.0.ListeningPath").String()
 	port := gjson.Get(config, "BiliAu2Card.0.ListeningPort").String()
+	log.Println("BiliAu2Card: Powered by Ink33")
 	log.Println("BiliAu2Card: Start listening", path, port)
 
 	http.HandleFunc(path, handleHTTP)
