@@ -32,11 +32,11 @@ func getAu(msg string) (au string) {
 func au2card(MsgInfo MsgInfo) {
 	au := getAu(MsgInfo.Message)
 	if au != "" {
-		log.Println("BiliAu2Card: Created request for", au, "from:", MsgInfo.SenderID)
+		log.Println("Created request for", au, "from:", MsgInfo.SenderID)
 		Auinfo := getAuInfo(au)
 
 		if !Auinfo.AuStatus {
-			msgMake := "BiliAu2Card: AU" + Auinfo.AuNumber + Auinfo.AuMsg
+			msgMake := "AU" + Auinfo.AuNumber + Auinfo.AuMsg
 			log.Println(msgMake)
 			switch MsgInfo.MsgType {
 			case "private":
@@ -59,7 +59,7 @@ func au2card(MsgInfo MsgInfo) {
 		}
 
 	} else {
-		log.Println("BiliAu2Card: Ingore message:", MsgInfo.Message, "from:", MsgInfo.SenderID)
+		log.Println("Ingore message:", MsgInfo.Message, "from:", MsgInfo.SenderID)
 	}
 }
 
@@ -101,10 +101,11 @@ func handleHTTP(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	config := readConfig()
+	log.SetPrefix("BiliAu2Card: ")
 	path := gjson.Get(config, "BiliAu2Card.0.ListeningPath").String()
 	port := gjson.Get(config, "BiliAu2Card.0.ListeningPort").String()
-	log.Println("BiliAu2Card: Powered by Ink33")
-	log.Println("BiliAu2Card: Start listening", path, port)
+	log.Println("Powered by Ink33")
+	log.Println("Start listening", path, port)
 
 	http.HandleFunc(path, handleHTTP)
 	err := http.ListenAndServe(":"+port, nil)
