@@ -15,16 +15,6 @@ import (
 
 var cqsecret string = gjson.Get(readConfig(), "HttpAPIPosSecret").String()
 
-//Read config file.
-func readConfig() string {
-	file, err := ioutil.ReadFile("conf.json")
-	if err != nil {
-		log.Fatal(err)
-	}
-	result := string(file)
-	return result
-}
-
 //Get audio number by regexp.
 func getAu(msg string) (au string) {
 	if strings.Contains(msg, "CQ:rich") {

@@ -44,3 +44,13 @@ func getWbeContent(url string) (body []byte) {
 	}
 	return content
 }
+
+//Read config file.
+func readConfig() string {
+	file, err := ioutil.ReadFile("conf.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+	result := string(file)
+	return result
+}
