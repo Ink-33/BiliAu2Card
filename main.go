@@ -15,65 +15,70 @@ import (
 
 var cqsecret string = gjson.Get(readConfig(), "HttpAPIPosSecret").String()
 
-//Get audio number by regexp.
-func getAu(msg string) (au string) {
+//GetAu : Get audio number by regexp.
+func GetAu(msg string) (au string) {
 	if strings.Contains(msg, "CQ:rich") {
 		return ""
 	}
+
 	reg, err := regexp.Compile("(?i)au[0-9]+")
 	if err != nil {
 		log.Fatalln(err)
 	}
+
 	str := strings.Join(reg.FindAllString(msg, 1), "")
 	return str
 }
 
-//Handle meassage and send music card.
-func au2card(MsgInfo MsgInfo) {
-	au := getAu(MsgInfo.Message)
+// Au2Card : Handle meassage and send music card.
+func Au2Card(MsgInfo *MsgInfo) {
+	au := GetAu(MsgInfo.Message)
+
 	if au != "" {
 		log.Println("Created request for", au, "from:", MsgInfo.SenderID)
 		Auinfo := getAuInfo(au)
 
 		if !Auinfo.AuStatus {
-			msgMake := "AU" + Auinfo.AuNumber + Auinfo.AuMsg
+			msgMake := "BiliAu2Card: AU" + Auinfo.AuNumber + Auinfo.AuMsg
 			log.Println(msgMake)
 			switch MsgInfo.MsgType {
 			case "private":
-				cqSendPrivateMsg(MsgInfo.SenderID, msgMake)
+				go cqSendPrivateMsg(MsgInfo.SenderID, msgMake)
 				break
 			case "group":
-				cqSendGroupMsg(MsgInfo.GroupID, msgMake)
+				go cqSendGroupMsg(MsgInfo.GroupID, msgMake)
 				break
 			}
 		} else {
 			cqCodeMake := "[CQ:music,type=custom,url=" + Auinfo.AuJumpURL + ",audio=" + Auinfo.AuURL + ",title=" + Auinfo.AuTitle + ",content=" + Auinfo.AuDesp + ",image=" + Auinfo.AuCoverURL + "@180w_180h]"
 			switch MsgInfo.MsgType {
 			case "private":
-				cqSendPrivateMsg(MsgInfo.SenderID, cqCodeMake)
+				go cqSendPrivateMsg(MsgInfo.SenderID, cqCodeMake)
 				break
 			case "group":
-				cqSendGroupMsg(MsgInfo.GroupID, cqCodeMake)
+				go cqSendGroupMsg(MsgInfo.GroupID, cqCodeMake)
 				break
 			}
 		}
-
 	} else {
 		log.Println("Ingore message:", MsgInfo.Message, "from:", MsgInfo.SenderID)
 	}
 }
 
-//handleMsg converts HTTP Post Body to MsgInfo Struct.
-func handleMsg(raw []byte) (MsgInfo MsgInfo) {
-	MsgInfo.MsgType = gjson.GetBytes(raw, "message_type").String()
-	MsgInfo.GroupID = gjson.GetBytes(raw, "group_id").String()
-	MsgInfo.Message = gjson.GetBytes(raw, "message").String()
-	MsgInfo.SenderID = gjson.GetBytes(raw, "user_id").String()
-	return
+//MsgHandler converts HTTP Post Body to MsgInfo Struct.
+func MsgHandler(raw []byte) (Msg *MsgInfo) {
+	var mi = new(MsgInfo)
+
+	mi.MsgType = gjson.GetBytes(raw, "message_type").String()
+	mi.GroupID = gjson.GetBytes(raw, "group_id").String()
+	mi.Message = gjson.GetBytes(raw, "message").String()
+	mi.SenderID = gjson.GetBytes(raw, "user_id").String()
+
+	return mi
 }
 
-//Handle request type before handling message.
-func handleHTTP(w http.ResponseWriter, r *http.Request) {
+//HTTPhandler : Handle request type before handling message.
+func HTTPhandler(w http.ResponseWriter, r *http.Request) {
 	method := r.Method
 	if method != "POST" {
 		w.WriteHeader(400)
@@ -95,7 +100,7 @@ func handleHTTP(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(signature)
 			fmt.Println(hmac.Equal(mac1.Sum(nil), []byte(signature)))
 		*/
-		au2card(handleMsg(body))
+		Au2Card(MsgHandler(body))
 	}
 }
 
@@ -107,7 +112,7 @@ func main() {
 	log.Println("Powered by Ink33")
 	log.Println("Start listening", path, port)
 
-	http.HandleFunc(path, handleHTTP)
+	http.HandleFunc(path, HTTPhandler)
 	err := http.ListenAndServe(":"+port, nil)
 	if err != nil {
 		log.Fatal("ListenAndServe", err)
