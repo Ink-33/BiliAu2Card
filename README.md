@@ -2,6 +2,10 @@
 基于[CQHTTPAPI](https://github.com/richardchien/coolq-http-api),提取聊天中的au号,然后返回音频卡片。  
 注意：卡片分享功能需要酷Q Pro, Air版将以文字形式发送。
 
+## 写在前面
+
+本项目合已并入SMLKBOT，因此本仓库将存档仅供学习。
+
 ## 用法
 
 将`conf.example.json`重命名为`cong.json`  
